@@ -20,6 +20,12 @@ return [
         'useMainRouteScope' => true,
         
         /**
+         * When 'true', this key will assimilate 'dashboard' requests to the
+         * 'index' action of the Users and Admins controllers.
+         */
+        'useDashboardRoute' => true,
+        
+        /**
          * When 'true', this key will provide the ability for anybody to register
          * as a user into the application.
          */

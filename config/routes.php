@@ -21,6 +21,20 @@ if (Configure::read('Users.useMainRouteScope')) {
             'action' => 'index'
         ]);
         
+        if (Configure::read('Users.useDashboardRoute')) {
+            $routes->connect('/users/dashboard', [
+               'plugin' => 'Propeller/Users',
+               'controller' => 'Users',
+               'action' => 'index'
+            ]);
+            
+            $routes->connect('/admin/dashboard', [
+                'plugin' => 'Propeller/Users',
+                'controller' => 'Admins',
+                'action' => 'index'
+            ]);
+        }
+        
         $routes->connect('/users/:action/*', [
             'plugin' => 'Propeller/Users',
             'controller' => 'Users'

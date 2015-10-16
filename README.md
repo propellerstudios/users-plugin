@@ -13,7 +13,7 @@ properly. The plugin also sets and handles routes.
 
     Plugin::load('Propeller/Users', ['bootstrap' => true, 'routes' => true]);
 
-There are six configuration directives that can be overwritten with this
+There are seven configuration directives that can be overwritten with this
 plugin. These keys are accessible from the 'Users' group of configuration.
 
 1.  `useEmailAsUsername` - Assures that the 'username' and 'email' fields are
@@ -23,12 +23,14 @@ plugin. These keys are accessible from the 'Users' group of configuration.
 3.  `useMainRouteScope` - Assures that you do not need to prefix any of the
     routes with `propeller/` to get to the actions of the Controllers. By
     default this setting is set to `true`.
-4.  `openRegistration` - Assures that anybody in the world can register for an
+4.  `useDashboardRoutes` - Assures that requests to `/dashboard` will forward
+    to the `index` action. Presumably where the dashboard is.
+5.  `openRegistration` - Assures that anybody in the world can register for an
     account. By default this setting is set to `true`.
-5.  `sendEmailVerification` - Assures that newly registered users are verified
+6.  `sendEmailVerification` - Assures that newly registered users are verified
     via email. You must have email transport set up for this to work properly.
     By default this setting is set to `false`.
-6.  `whiteList` - A list of actions in the `Users` controller that are
+7.  `whiteList` - A list of actions in the `Users` controller that are
     accessible to users who are not logged in. By default all `index` and `view`
     actions are accessible. Note to append to this list, instead of overwriting
     it. The default white-listed actions are:

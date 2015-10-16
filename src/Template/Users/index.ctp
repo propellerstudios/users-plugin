@@ -1,7 +1,12 @@
 <section>
     <ul>
-    <?php foreach ($users as $user): ?>
-        <li><?= $user->username ?></li>
-    <?php endforeach; ?>
+        <li>
+            <?=
+                $this->Html->link('Edit Profile', [
+                    'controller' => 'Users',
+                    'action' => 'edit'
+                ]);
+            ?>
+        </li>
     </ul>
 </section>

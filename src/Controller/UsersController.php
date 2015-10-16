@@ -27,8 +27,9 @@ class UsersController extends AppController
      */
     public function index()
     {
-        $users = $this->Users->find('all');
-        $this->set('users', $users);
+        if (!$this->request->session()->check('Auth.User')) {
+            return $this->redirect(['action' => 'login']);
+        }
     }
     
     /**

@@ -1,0 +1,24 @@
+{
+    "name": "propellerstudios/users-plugin",
+    "description": "Users plugin for CakePHP",
+    "type": "cakephp-plugin",
+    "version": "1.0.0",
+    "require": {
+        "php": ">=5.4.16",
+        "cakephp/cakephp": "~3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Propeller\\Users\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Propeller\\Users\\Test\\": "tests",
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+        }
+    }
+}

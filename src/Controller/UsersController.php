@@ -152,7 +152,7 @@ class UsersController extends AppController
     }
     
     /**
-     * Resets the password of a user
+     * Resets the password of a user without having them authenticated.
      */
     public function reset()
     {
@@ -180,6 +180,9 @@ class UsersController extends AppController
         }
     }
     
+    /**
+     * TODO: Finish this.
+     */
     public function requestPassword()
     {
         if ($this->request->is('post')) {
@@ -188,10 +191,12 @@ class UsersController extends AppController
             if($user->count() > 0) {
                 $email = new Email();
                 $email->to($user->email, 'Requested Password Reset')
+                      ->template('Users.reset_password')
+                      ->viewVars(['key' => $user->personal_key])
                       ->send();
                 
                 $this->Flash->success(
-                    __('Email has been sent with a link to reset your password.')
+                    __('An email has been sent with a link to reset your password.')
                 );
                 return $this->redirect(['action' => 'index']);
             }

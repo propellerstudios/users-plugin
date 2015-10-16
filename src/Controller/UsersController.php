@@ -4,6 +4,7 @@ namespace Propeller\Users\Controller;
 
 use Propeller\Users\Controller\AppController;
 use Cake\Core\Configure;
+use Cake\Mailer\Email;
 
 class UsersController extends AppController
 {
@@ -20,12 +21,19 @@ class UsersController extends AppController
         $this->Auth->allow($whiteList);
     }
     
+    /**
+     * Very basic right now, this just lists all the users. Eventually it will
+     * be a dashboard for the user.
+     */
     public function index()
     {
         $users = $this->Users->find('all');
         $this->set('users', $users);
     }
     
+    /**
+     * Edits the information about the user.
+     */
     public function edit($id = null)
     {
         if (is_null($id)) {
@@ -62,6 +70,9 @@ class UsersController extends AppController
         ]);
     }
     
+    /**
+     * Registers a new user.
+     */
     public function register()
     {
         $user = $this->Users->newEntity();
@@ -86,6 +97,9 @@ class UsersController extends AppController
         ]);
     }
     
+    /**
+     * Logs a user into the application.
+     */
     public function login()
     {
         if ($this->request->is(['post'])) {
@@ -102,6 +116,9 @@ class UsersController extends AppController
         }
     }
     
+    /**
+     * Logs a user out.
+     */
     public function logout()
     {
         return $this->redirect($this->Auth->logout());
@@ -117,8 +134,8 @@ class UsersController extends AppController
             $this->Flash->error(__('What are you doing here?'));
             return $this->redirect(['action' => 'index']);
         } else {
-            $personalKey = $this->request->query['key'];
-            $user = $this->Users->findByPersonalKey($personalKey);
+            $key = $this->request->query['key'];
+            $user = $this->Users->findByPersonalKey($key);
             
             if ($user->count() === 0) {
                 $this->Flash->error(__('This user does not exist.'));
@@ -128,6 +145,8 @@ class UsersController extends AppController
             $action = (isset($this->request->query['action']))
                 ? $this->request->query['action'] : 'index';
             
+            $this->request->session()->write('Users.verified', true);
+            $this->request->session()->write('Users.key', $key);
             return $this->redirect(['action' => $action]);
         }
     }
@@ -137,6 +156,49 @@ class UsersController extends AppController
      */
     public function reset()
     {
+        if (!$this->request->session()->read('Users.verified')) {
+            $this->Flash->error(__('You have not been verified to do this.'));
+            return $this->redirect(['action' => 'index']);
+        }
         
+        $key = $this->request->session()->read('Users.key');
+        
+        if ($this->request->is('put')) {
+            $this->request->session()->delete('Users.verified');
+            
+            $user = $this->Users->findByPersonalKey($key)->first();
+            $user = $this->Users->patchEntity($user, $this->request->data);
+            
+            if ($this->Users->save($user)) {
+                $this->request->session()->delete('Users.key');
+                $this->Flash->success(__('Successfully updated this user\'s password.'));
+                return $this->redirect(['action' => 'index']);
+            }
+            
+            $this->Flash->error(__('Error resetting the password.'));
+            return $this->redirect(['action' => 'index']);
+        }
     }
+    
+    public function requestPassword()
+    {
+        if ($this->request->is('post')) {
+            $user = $this->Users->findByEmail($this->request->data['email']);
+            
+            if($user->count() > 0) {
+                $email = new Email();
+                $email->to($user->email, 'Requested Password Reset')
+                      ->send();
+                
+                $this->Flash->success(
+                    __('Email has been sent with a link to reset your password.')
+                );
+                return $this->redirect(['action' => 'index']);
+            }
+            
+            $this->Flash->error(__('No username associated with this email address.'));
+            return $this->redirect(['action' => 'index']);
+        }
+    }
+    
 }

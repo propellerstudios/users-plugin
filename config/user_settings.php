@@ -36,7 +36,7 @@ return [
          */
         'whiteList' => [
             'login',
-            'logout',
+            'verify',
             'reset'
         ]
     ]

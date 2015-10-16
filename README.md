@@ -33,5 +33,5 @@ plugin. These keys are accessible from the 'Users' group of configuration.
     actions are accessible. Note to append to this list, instead of overwriting
     it. The default white-listed actions are:
     * `login` - To log a user in
-    * `logout` - To log a user out
+    * `verify` - Verifies a user by their `personal_key`
     * `reset` - Request to reset password

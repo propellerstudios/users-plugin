@@ -44,7 +44,8 @@ class UsersValidator extends Validator
                     
                     return ($user->count() > 0) ? false : true;
                 },
-                'message' => __('This username is already in use.')
+                'message' => __('This username is already in use.'),
+                'on' => 'create'
              ])
              ->add('email', 'unique', [
                 'rule' => function ($value, $context) use ($usersTable) {
@@ -52,7 +53,8 @@ class UsersValidator extends Validator
                     
                     return ($user->count() > 0) ? false : true;
                 },
-                'message' => __('This email is already in use.')
+                'message' => __('This email is already in use.'),
+                'on' => 'create'
              ]);
     }
 }

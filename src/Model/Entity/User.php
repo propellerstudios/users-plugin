@@ -7,6 +7,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Core\Configure;
 use Cake\Auth\DefaultPasswordHasher;
 use Cake\Utility\Text;
+use Cake\Mailer\Email;
 
 class User extends Entity
 {
@@ -24,6 +25,44 @@ class User extends Entity
     protected $_hidden = [
         'password'
     ];
+    
+    /**
+     * This will send the Password Reset link to the email address registered.
+     */
+    public function emailPasswordReset()
+    {
+        $email = $this->getEmailInstance();
+        $email->subject('Requested Password Reset')
+              ->template('Propeller/Users.reset_password')
+              ->send();
+    }
+    
+    /**
+     * This will send the verification link to the email address registered.
+     */
+    public function emailVerification()
+    {
+        $email = $this->getEmailInstance();
+        $email->subject('Thank you for registering!')
+              ->template('Propeller/Users.verification')
+              ->send();
+    }
+    
+    /**
+     * Builds an instance of the Email object with some default settings applied
+     * from the model data.
+     *
+     * @return \Cake\Mailer\Email
+     */
+    private function getEmailInstance()
+    {
+        $email = new Email();
+        $email->to($this->email)
+              ->viewVars(['key' => $this->personal_key])
+              ->emailFormat('both');
+        
+        return $email;
+    }
     
     /**
      * @return string First and Last names as a single string.

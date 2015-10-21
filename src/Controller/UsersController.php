@@ -55,6 +55,14 @@ class UsersController extends AppController
             return $this->redirect(['action' => 'index']);
         }
         
+        if ($this->request->is(['post', 'put'])) {
+            $user = $this->Users->patchEntity($user, $this->request->data);
+            
+            if ($user) {
+                $this->Flash->success(__('Successfully edited your profile.'));
+            }
+        }
+        
         $this->set([
             'user' => $user,
             'useEmailAsUsername' => Configure::read('Users.useEmailAsUsername')
@@ -78,8 +86,14 @@ class UsersController extends AppController
     {
         $user = $this->Users->newEntity();
         
-        if ($this->request->is(['post'])) {            
+        if ($this->request->is(['post'])) {   
             $user = $this->Users->patchEntity($user, $this->request->data);
+            
+            if (Configure::read('Users.sendEmailVerification')) {
+                $user->set('active', false);
+            } else {
+                $user->set('active', true);
+            }
             
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Successfully registered user.'));
@@ -107,6 +121,11 @@ class UsersController extends AppController
             $user = $this->Auth->identify();
             
             if ($user) {
+                if($user['verified'] === false) {
+                    $this->Flash->error(__('This user is not yet verified.'));
+                    return $this->redirect(['action' => 'index']);
+                }
+                
                 $user['admin'] = $this->Users->isAdmin($user['id']);
                 
                 $this->Auth->setUser($user);
@@ -134,22 +153,22 @@ class UsersController extends AppController
         if (!$this->request->query['key']) {
             $this->Flash->error(__('What are you doing here?'));
             return $this->redirect(['action' => 'index']);
-        } else {
-            $key = $this->request->query['key'];
-            $user = $this->Users->findByPersonalKey($key);
+        }
+        
+        $key = $this->request->query['key'];
+        $user = $this->Users->findByPersonalKey($key);
             
-            if ($user->count() === 0) {
-                $this->Flash->error(__('This user does not exist.'));
-                return $this->redirect(['action' => 'index']);
-            }
+        if ($user->count() === 0) {
+            $this->Flash->error(__('This user does not exist.'));
+            return $this->redirect(['action' => 'index']);
+        }
             
-            $action = (isset($this->request->query['action']))
+        $action = (isset($this->request->query['action']))
                 ? $this->request->query['action'] : 'index';
             
-            $this->request->session()->write('Users.verified', true);
-            $this->request->session()->write('Users.key', $key);
-            return $this->redirect(['action' => $action]);
-        }
+        $this->request->session()->write('Users.verified', true);
+        $this->request->session()->write('Users.key', $key);
+        return $this->redirect(['action' => $action]);
     }
     
     /**
@@ -180,21 +199,40 @@ class UsersController extends AppController
             return $this->redirect(['action' => 'index']);
         }
     }
+
+    /**
+     * Verifies new users and sets their 'active' field in the database to true.
+     */
+    public function verifyNew()
+    {
+        if ($this->request->session()->read('Users.verified')) {
+            $personalKey = $this->request->session()->read('Users.key');
+            $user = $this->Users->findByPersonalKey($personalKey)->first();
+            $user->set('active', true);
+            
+            if ($this->Users->save($user)) {
+                $this->request->session()->delete('Users.verified');
+                $this->request->session()->delete('Users.key');
+                $this->Flash->success(__('You have been verified!'));
+                return $this->redirect(['action' => 'login']);
+            }
+        } else {
+            $this->Flash->error(__('You are not verified to be here.'));
+            return $this->redirect(['action' => 'index']);
+        }
+    }
     
     /**
-     * TODO: Finish this.
+     * When you forget your password, you probably want to reset it. This will
+     * email you with a link to reset your password.
      */
     public function requestPassword()
     {
         if ($this->request->is('post')) {
-            $user = $this->Users->findByEmail($this->request->data['email']);
+            $user = $this->Users->findByEmail($this->request->data['email'])->first();
             
-            if($user->count() > 0) {
-                $email = new Email();
-                $email->to($user->email, 'Requested Password Reset')
-                      ->template('Users.reset_password')
-                      ->viewVars(['key' => $user->personal_key])
-                      ->send();
+            if($user) {
+                $user->emailPasswordReset();
                 
                 $this->Flash->success(
                     __('An email has been sent with a link to reset your password.')

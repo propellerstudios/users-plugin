@@ -35,15 +35,17 @@ return [
          * When 'true', this key will enable email confirmation of newly
          * registered users.
          */
-        'sendEmailVerification' => false,
+        'sendEmailVerification' => true,
         
         /**
          * This is a list of white-listed actions for the 'Users' controller.
          */
         'whiteList' => [
             'login',
-            'verify',
-            'reset'
+            'verify',           // used to verify a user based on a unique ID
+            'reset',            // used to change the password
+            'requestPassword',  // used to request a new pass word
+            'vertifyNew'        // used to verify new users
         ]
     ]
 ];

@@ -1,5 +1,5 @@
 <section>
-    <?= $this->Form->create($user) ?>
+    <?= $this->Form->create($user, ['type' => 'put']) ?>
     <?= $this->Form->input('username') ?>
     
     <?php if (!$useEmailAsUsername): ?>

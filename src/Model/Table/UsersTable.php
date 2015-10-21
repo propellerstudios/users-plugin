@@ -38,9 +38,20 @@ class UsersTable extends Table
         }
     }
     
+    /**
+     * Every save event triggers a new personal_key. If the entity is new then
+     * check the config if there needs to be an email verification.
+     */
     public function beforeSave(Event $event, Entity $entity)
     {
         $entity->set('personal_key');
+        
+        if ($entity->isNew()) {
+            if (Configure::read('Users.sendEmailVerification')) {
+                $entity->set('active', false);
+                $entity->emailVerification();
+            }
+        }
     }
     
     /**

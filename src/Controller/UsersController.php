@@ -89,12 +89,6 @@ class UsersController extends AppController
         if ($this->request->is(['post'])) {   
             $user = $this->Users->patchEntity($user, $this->request->data);
             
-            if (Configure::read('Users.sendEmailVerification')) {
-                $user->set('active', false);
-            } else {
-                $user->set('active', true);
-            }
-            
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Successfully registered user.'));
                 return $this->redirect(['action' => 'index']);
@@ -216,10 +210,10 @@ class UsersController extends AppController
                 $this->Flash->success(__('You have been verified!'));
                 return $this->redirect(['action' => 'login']);
             }
-        } else {
-            $this->Flash->error(__('You are not verified to be here.'));
-            return $this->redirect(['action' => 'index']);
         }
+        
+        $this->Flash->error(__('You are not verified to be here.'));
+        return $this->redirect(['action' => 'index']);
     }
     
     /**
@@ -231,7 +225,7 @@ class UsersController extends AppController
         if ($this->request->is('post')) {
             $user = $this->Users->findByEmail($this->request->data['email'])->first();
             
-            if($user) {
+            if ($user) {
                 $user->emailPasswordReset();
                 
                 $this->Flash->success(
@@ -240,7 +234,7 @@ class UsersController extends AppController
                 return $this->redirect(['action' => 'index']);
             }
             
-            $this->Flash->error(__('No username associated with this email address.'));
+            $this->Flash->error(__('No username is associated with this email address.'));
             return $this->redirect(['action' => 'index']);
         }
     }

@@ -2,9 +2,9 @@
     "name": "propellerstudios/users-plugin",
     "description": "Users plugin for CakePHP",
     "type": "cakephp-plugin",
-    "version": "1.0.0",
+    "version": "v0.1.0",
     "require": {
-        "php": ">=5.4.16",
+        "php": ">=5.4.*",
         "cakephp/cakephp": "~3.0"
     },
     "require-dev": {

@@ -1,8 +1,16 @@
 # Users plugin for CakePHP
 
+A CakePHP 3.x plugin for users. The original concept is boilerplate user
+management using the default CakePHP Auth component.
+
 To use this plugin simply require it with Composer.
 
     $ composer require propellerstudios/users-plugin
+
+Once Composer has the necessary files, run a migration to add the `users` table
+to your database.
+
+    $ bin/cake migrations migrate -p Propeller/Users
 
 ## Configuration
 
@@ -13,27 +21,20 @@ properly. The plugin also sets and handles routes.
 
     Plugin::load('Propeller/Users', ['bootstrap' => true, 'routes' => true]);
 
-There are seven configuration directives that can be overwritten with this
-plugin. These keys are accessible from the 'Users' group of configuration.
+There are several keys for configuring the Users plugin.
 
-1.  `useEmailAsUsername` - Assures that the 'username' and 'email' fields are
-    synonymous. By default this setting is set to `false`.
-2.  `firstUserIsAdmin` - Assures that the first registered user is automatically
-    determined as an `admin`. By default this setting is set to `true`.
-3.  `useMainRouteScope` - Assures that you do not need to prefix any of the
-    routes with `propeller/` to get to the actions of the Controllers. By
-    default this setting is set to `true`.
-4.  `useDashboardRoutes` - Assures that requests to `/dashboard` will forward
-    to the `index` action. Presumably where the dashboard is.
-5.  `openRegistration` - Assures that anybody in the world can register for an
-    account. By default this setting is set to `true`.
-6.  `sendEmailVerification` - Assures that newly registered users are verified
-    via email. You must have email transport set up for this to work properly.
-    By default this setting is set to `false`.
-7.  `whiteList` - A list of actions in the `Users` controller that are
-    accessible to users who are not logged in. By default all `index` and `view`
-    actions are accessible. Note to append to this list, instead of overwriting
-    it. The default white-listed actions are:
-    * `login` - To log a user in
-    * `verify` - Verifies a user by their `personal_key`
-    * `reset` - Request to reset password
+* `use_email_as_username`
+* `first_user_is_admin`
+* `use_main_route_scope`
+* `use_dashboard_route`
+* `open_registration`
+* `send_email_verification`
+* `white_list`
+
+All of these keys are boolean values save for `white_list` which is an array of
+actions that are available to non-authorized visitors of the site. To overwrite
+any of these, *after* your `Plugin::load()` command, just rewrite the keys that
+you wish like so:
+
+    Configure::write('Users.white_list', ['index', 'view']);
+    Configure::write('Users.use_email_as_username', false);

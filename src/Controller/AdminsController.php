@@ -32,7 +32,7 @@ class AdminsController extends AppController
     
     public function delete($id)
     {
-        if ($this->Auth->user('id') == $id) {
+        if ($this->Auth->user('id') === $id) {
             $this->Flash->error(__('You cannot delete yourself.'));
             return $this->redirect(['action' => 'index']);
         }
@@ -44,5 +44,7 @@ class AdminsController extends AppController
             $this->Flash->success(__('Successfully deleted user.'));
             return $this->redirect(['action' => 'index']);
         }
+        
+        $this->Flash->error(__('Error deleting the user.'));
     }
 }

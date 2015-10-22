@@ -35,7 +35,7 @@ return [
          * When 'true', this key will enable email confirmation of newly
          * registered users.
          */
-        'send_email_verification' => true,
+        'send_email_verification' => false,
         
         /**
          * This is a list of white-listed actions for the 'Users' controller.

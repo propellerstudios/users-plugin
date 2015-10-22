@@ -20,7 +20,7 @@ class UsersValidator extends Validator
              ->requirePresence('first_name', 'create')
              ->requirePresence('last_name', 'create');
         
-        if (Configure::read('Users.emailAsUsername')) {
+        if (Configure::read('Users.use_email_as_username')) {
             $this->add('username', 'validFormat', [
                 'rule' => 'email',
                 'message' => __('Must be a valid email address.')

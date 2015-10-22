@@ -47,8 +47,7 @@ class UsersTable extends Table
         $entity->set('personal_key');
         
         if ($entity->isNew()) {
-            if (Configure::read('Users.sendEmailVerification')) {
-                $entity->set('active', false);
+            if (Configure::read('Users.send_email_verification')) {
                 $entity->emailVerification();
             }
         }
@@ -66,5 +65,16 @@ class UsersTable extends Table
         $admin = $adminsTable->findByUserId($id);
         
         return ($admin->count() > 0) ? true : false;
+    }
+    
+    /**
+     * Basically just an alias method to read the configuration file to see if
+     * the username and email address are synonymous.
+     *
+     * @return boolean True if the email and username are synonymous
+     */
+    public function usernameIsEmail()
+    {
+        return Configure::read('Users.use_email_as_username');
     }
 }

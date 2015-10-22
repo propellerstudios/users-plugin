@@ -93,7 +93,7 @@ class User extends Entity
      */
     protected function _setEmail($email)
     {
-        if (Configure::read('Users.emailAsUsername')) {
+        if (Configure::read('Users.email_as_username')) {
             return $this->username;
         }
         
@@ -119,8 +119,7 @@ class User extends Entity
      */
     protected function _setActive()
     {
-        if (Configure::read('sendEmailVerification')) {
-            
+        if (Configure::read('Users.send_email_verification')) {
             return 0;
         }
         

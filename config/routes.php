@@ -7,7 +7,7 @@ use Cake\Core\Configure;
  * route scope ('/') or use its plugin notation ('/propeller/users')
  */
 
-if (Configure::read('Users.useMainRouteScope')) {
+if (Configure::read('Users.use_main_route_scope')) {
     Router::scope('/', function ($routes) {
         $routes->connect('/users', [
             'plugin' => 'Propeller/Users',
@@ -21,7 +21,7 @@ if (Configure::read('Users.useMainRouteScope')) {
             'action' => 'index'
         ]);
         
-        if (Configure::read('Users.useDashboardRoute')) {
+        if (Configure::read('Users.use_dashboard_route')) {
             $routes->connect('/users/dashboard', [
                'plugin' => 'Propeller/Users',
                'controller' => 'Users',

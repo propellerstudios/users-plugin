@@ -7,6 +7,8 @@ use Cake\ORM\TableRegistry;
 
 class Admin extends Entity
 {
+    protected $_virtual = ['users'];
+    
     protected function _getUsers()
     {
         $usersTable = TableRegistry::get('Users');

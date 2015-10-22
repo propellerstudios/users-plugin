@@ -12,9 +12,9 @@ class UsersController extends AppController
     {
         parent::beforeFilter($event);
         
-        $whiteList = Configure::read('Users.whiteList');
+        $whiteList = Configure::read('Users.white_list');
         
-        if (Configure::read('Users.openRegistration')) {
+        if (Configure::read('Users.open_registration')) {
             $whiteList[] = 'register';
         }
         
@@ -65,7 +65,7 @@ class UsersController extends AppController
         
         $this->set([
             'user' => $user,
-            'useEmailAsUsername' => Configure::read('Users.useEmailAsUsername')
+            'useEmailAsUsername' => $this->Users->usernameIsEmail()
         ]);
     }
     
@@ -75,7 +75,7 @@ class UsersController extends AppController
         
         $this->set([
             'user' => $user,
-            'useEmailAsUsername' => Configure::read('Users.useEmailAsUsername')
+            'useEmailAsUsername' => $this->Users->usernameIsEmail()
         ]);
     }
     
@@ -102,7 +102,7 @@ class UsersController extends AppController
         
         $this->set([
             'user' => $user,
-            'useEmailAsUsername' => Configure::read('Users.useEmailAsUsername')
+            'useEmailAsUsername' => $this->Users->usernameIsEmail()
         ]);
     }
     
@@ -200,8 +200,9 @@ class UsersController extends AppController
     public function verifyNew()
     {
         if ($this->request->session()->read('Users.verified')) {
-            $personalKey = $this->request->session()->read('Users.key');
-            $user = $this->Users->findByPersonalKey($personalKey)->first();
+            $key = $this->request->session()->read('Users.key');
+            $user = $this->Users->findByPersonalKey($key)->first();
+            
             $user->set('active', true);
             
             if ($this->Users->save($user)) {

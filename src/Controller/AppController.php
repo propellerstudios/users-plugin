@@ -2,7 +2,7 @@
 
 namespace Propeller\Users\Controller;
 
-use App\Controller\AppController as BaseController;
+use Cake\Controller\Controller as BaseController;
 use Cake\Core\Configure;
 
 class AppController extends BaseController
@@ -10,7 +10,7 @@ class AppController extends BaseController
     public function initialize()
     {
         parent::initialize();
-        
+
         $this->loadComponent('Auth', [
             'loginAction' => [
                 'controller' => 'Users',
@@ -18,7 +18,7 @@ class AppController extends BaseController
             ]
         ]);
     }
-    
+
     public function beforeFilter(\Cake\Event\Event $event)
     {
         parent::beforeFilter($event);
